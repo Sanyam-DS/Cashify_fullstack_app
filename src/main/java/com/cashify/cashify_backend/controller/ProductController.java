@@ -3,6 +3,7 @@ package com.cashify.cashify_backend.controller;
 import com.cashify.cashify_backend.entity.Product;
 import com.cashify.cashify_backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -41,5 +42,53 @@ public class ProductController {
     public String deleteProduct(@PathVariable Long id) {
 
         return productService.deleteProduct(id);
+    }
+
+    @GetMapping("/search")
+    public List<Product> searchProducts(@RequestParam String name) {
+
+        return productService.searchProducts(name);
+    }
+
+    @GetMapping("/brand/{brand}")
+    public List<Product> getProductsByBrand(@PathVariable String brand) {
+
+        return productService.getProductsByBrand(brand);
+    }
+
+    @GetMapping("/price/{price}")
+    public List<Product> getProductsByPrice(@PathVariable double price) {
+
+        return productService.getProductsByPrice(price);
+    }
+
+    @GetMapping("/category/{category}")
+    public List<Product> getProductsByCategory(@PathVariable String category) {
+
+        return productService.getProductsByCategory(category);
+    }
+
+    @GetMapping
+    public Page<Product> getProducts(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam String sortBy
+    ) {
+
+        return productService.getProducts(page, size, sortBy);
+    }
+
+    @GetMapping("/filter")
+    public List<Product> filterProducts(
+            @RequestParam String brand,
+            @RequestParam String category,
+            @RequestParam double price
+    ) {
+
+        return productService.filterProducts(
+                brand,
+                category,
+                price
+        );
     }
 }
