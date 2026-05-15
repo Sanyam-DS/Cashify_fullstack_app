@@ -1,5 +1,7 @@
 package com.cashify.cashify_backend.controller;
 
+import com.cashify.cashify_backend.dto.ProductDetailsDTO;
+import com.cashify.cashify_backend.dto.ProductResponseDTO;
 import com.cashify.cashify_backend.entity.Product;
 import com.cashify.cashify_backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,12 +24,12 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public List<Product> getAllProducts() {
+    public List<ProductResponseDTO> getAllProducts() {
         return productService.getAllProducts();
     }
 
     @GetMapping("/{id}")
-    public Product getProductById(@PathVariable Long id) {
+    public ProductDetailsDTO getProductById(@PathVariable Long id) {
         return productService.getProductById(id);
     }
 

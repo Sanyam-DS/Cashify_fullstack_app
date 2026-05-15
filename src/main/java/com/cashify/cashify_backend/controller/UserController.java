@@ -1,5 +1,9 @@
 package com.cashify.cashify_backend.controller;
 
+import com.cashify.cashify_backend.dto.LoginRequestDTO;
+import com.cashify.cashify_backend.dto.LoginResponseDTO;
+import com.cashify.cashify_backend.dto.RegisterRequestDTO;
+import com.cashify.cashify_backend.dto.RegisterResponseDTO;
 import com.cashify.cashify_backend.entity.User;
 import com.cashify.cashify_backend.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,13 +18,41 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public User register(@RequestBody User user) {
-        return userService.register(user);
+    public RegisterResponseDTO register(
+            @RequestBody RegisterRequestDTO request
+    ) {
+
+        User user = new User();
+
+        user.setName(request.getName());
+
+        user.setEmail(request.getEmail());
+
+        user.setPassword(request.getPassword());
+
+        user.setRole(request.getRole());
+
+        User savedUser = userService.register(user);
+
+        return new RegisterResponseDTO(
+                savedUser.getId(),
+                savedUser.getName(),
+                savedUser.getEmail(),
+                savedUser.getRole()
+        );
     }
 
     @PostMapping("/login")
-    public String login(@RequestBody User user) {
-        return userService.login(user.getEmail(), user.getPassword());
+    public LoginResponseDTO login(
+            @RequestBody LoginRequestDTO request
+    ) {
+
+        String token = userService.login(
+                request.getEmail(),
+                request.getPassword()
+        );
+
+        return new LoginResponseDTO(token);
     }
 
     @GetMapping("/profile")

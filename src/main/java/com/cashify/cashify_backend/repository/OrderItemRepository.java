@@ -1,4 +1,8 @@
 package com.cashify.cashify_backend.repository;
 
-public interface OrderItemRepository {
+import com.cashify.cashify_backend.entity.OrderItem;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface OrderItemRepository
+        extends JpaRepository<OrderItem, Long> {
 }

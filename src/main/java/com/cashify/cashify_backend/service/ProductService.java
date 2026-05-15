@@ -1,6 +1,9 @@
 package com.cashify.cashify_backend.service;
 
+import com.cashify.cashify_backend.dto.ProductDetailsDTO;
+import com.cashify.cashify_backend.dto.ProductResponseDTO;
 import com.cashify.cashify_backend.entity.Product;
+import com.cashify.cashify_backend.exception.ProductNotFoundException;
 import com.cashify.cashify_backend.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,13 +24,14 @@ public class ProductService {
         return productRepository.save(product);
     }
 
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
-    }
+    public List<ProductResponseDTO> getAllProducts() {
 
-    public Product getProductById(Long id) {
-        return productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+        List<Product> products =
+                productRepository.findAll();
+
+        return products.stream()
+                .map(this::mapToDTO)
+                .toList();
     }
 
     public Product updateProduct(Long id, Product updatedProduct) {
@@ -92,5 +96,34 @@ public class ProductService {
                         category,
                         price
                 );
+    }
+
+    private ProductResponseDTO mapToDTO(Product product) {
+
+        return new ProductResponseDTO(
+                product.getId(),
+                product.getName(),
+                product.getBrand(),
+                product.getCategory(),
+                product.getPrice(),
+                product.getImageUrl()
+        );
+    }
+
+    public ProductDetailsDTO getProductById(Long id) {
+
+        Product product = productRepository.findById(id)
+                .orElseThrow(() ->
+                        new ProductNotFoundException("Product not found"));
+
+        return new ProductDetailsDTO(
+                product.getId(),
+                product.getName(),
+                product.getDescription(),
+                product.getBrand(),
+                product.getCategory(),
+                product.getPrice(),
+                product.getImageUrl()
+        );
     }
 }
