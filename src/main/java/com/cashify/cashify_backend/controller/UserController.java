@@ -6,6 +6,7 @@ import com.cashify.cashify_backend.dto.RegisterRequestDTO;
 import com.cashify.cashify_backend.dto.RegisterResponseDTO;
 import com.cashify.cashify_backend.entity.User;
 import com.cashify.cashify_backend.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,7 +20,7 @@ public class UserController {
 
     @PostMapping("/register")
     public RegisterResponseDTO register(
-            @RequestBody RegisterRequestDTO request
+            @Valid @RequestBody RegisterRequestDTO request
     ) {
 
         User user = new User();
