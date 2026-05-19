@@ -3,6 +3,7 @@ package com.cashify.cashify_backend.controller;
 import com.cashify.cashify_backend.dto.ProductDetailsDTO;
 import com.cashify.cashify_backend.dto.ProductResponseDTO;
 import com.cashify.cashify_backend.entity.Product;
+import com.cashify.cashify_backend.response.ApiResponse;
 import com.cashify.cashify_backend.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,26 +25,64 @@ public class ProductController {
     }
 
     @GetMapping("/all")
-    public List<ProductResponseDTO> getAllProducts() {
-        return productService.getAllProducts();
+    public ApiResponse<List<ProductResponseDTO>>
+    getAllProducts() {
+
+        List<ProductResponseDTO> products =
+                productService.getAllProducts();
+
+        return new ApiResponse<>(
+                true,
+                "Products fetched successfully",
+                products
+        );
     }
 
     @GetMapping("/{id}")
-    public ProductDetailsDTO getProductById(@PathVariable Long id) {
-        return productService.getProductById(id);
+    public ApiResponse<ProductDetailsDTO>
+    getProductById(
+            @PathVariable Long id
+    ) {
+
+        ProductDetailsDTO product =
+                productService.getProductById(id);
+
+        return new ApiResponse<>(
+                true,
+                "Product fetched successfully",
+                product
+        );
     }
 
     @PutMapping("/update/{id}")
-    public Product updateProduct(@PathVariable Long id,
-                                 @RequestBody Product product) {
+    public ApiResponse<ProductDetailsDTO> updateProduct(
+            @PathVariable Long id,
+            @RequestBody Product product
+    ) {
 
-        return productService.updateProduct(id, product);
+        ProductDetailsDTO updatedProduct =
+                productService.updateProduct(id, product);
+
+        return new ApiResponse<>(
+                true,
+                "Product updated successfully",
+                updatedProduct
+        );
     }
 
     @DeleteMapping("/delete/{id}")
-    public String deleteProduct(@PathVariable Long id) {
+    public ApiResponse<String> deleteProduct(
+            @PathVariable Long id
+    ) {
 
-        return productService.deleteProduct(id);
+        String message =
+                productService.deleteProduct(id);
+
+        return new ApiResponse<>(
+                true,
+                message,
+                null
+        );
     }
 
     @GetMapping("/search")

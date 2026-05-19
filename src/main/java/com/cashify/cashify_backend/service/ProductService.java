@@ -34,10 +34,16 @@ public class ProductService {
                 .toList();
     }
 
-    public Product updateProduct(Long id, Product updatedProduct) {
+    public ProductDetailsDTO updateProduct(
+            Long id,
+            Product updatedProduct
+    ) {
 
         Product existingProduct = productRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() ->
+                        new ProductNotFoundException(
+                                "Product not found"
+                        ));
 
         existingProduct.setName(updatedProduct.getName());
         existingProduct.setBrand(updatedProduct.getBrand());
@@ -46,7 +52,18 @@ public class ProductService {
         existingProduct.setCategory(updatedProduct.getCategory());
         existingProduct.setImageUrl(updatedProduct.getImageUrl());
 
-        return productRepository.save(existingProduct);
+        Product savedProduct =
+                productRepository.save(existingProduct);
+
+        return new ProductDetailsDTO(
+                savedProduct.getId(),
+                savedProduct.getName(),
+                savedProduct.getDescription(),
+                savedProduct.getBrand(),
+                savedProduct.getCategory(),
+                savedProduct.getPrice(),
+                savedProduct.getImageUrl()
+        );
     }
 
     public String deleteProduct(Long id) {

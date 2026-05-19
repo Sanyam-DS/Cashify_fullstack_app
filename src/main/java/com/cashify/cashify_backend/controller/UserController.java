@@ -5,6 +5,7 @@ import com.cashify.cashify_backend.dto.LoginResponseDTO;
 import com.cashify.cashify_backend.dto.RegisterRequestDTO;
 import com.cashify.cashify_backend.dto.RegisterResponseDTO;
 import com.cashify.cashify_backend.entity.User;
+import com.cashify.cashify_backend.response.ApiResponse;
 import com.cashify.cashify_backend.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +20,7 @@ public class UserController {
     private UserService userService;
 
     @PostMapping("/register")
-    public RegisterResponseDTO register(
+    public ApiResponse<RegisterResponseDTO> register(
             @Valid @RequestBody RegisterRequestDTO request
     ) {
 
@@ -35,16 +36,23 @@ public class UserController {
 
         User savedUser = userService.register(user);
 
-        return new RegisterResponseDTO(
-                savedUser.getId(),
-                savedUser.getName(),
-                savedUser.getEmail(),
-                savedUser.getRole()
+        RegisterResponseDTO response =
+                new RegisterResponseDTO(
+                        savedUser.getId(),
+                        savedUser.getName(),
+                        savedUser.getEmail(),
+                        savedUser.getRole()
+                );
+
+        return new ApiResponse<>(
+                true,
+                "User registered successfully",
+                response
         );
     }
 
     @PostMapping("/login")
-    public LoginResponseDTO login(
+    public ApiResponse<LoginResponseDTO> login(
             @RequestBody LoginRequestDTO request
     ) {
 
@@ -53,7 +61,14 @@ public class UserController {
                 request.getPassword()
         );
 
-        return new LoginResponseDTO(token);
+        LoginResponseDTO response =
+                new LoginResponseDTO(token);
+
+        return new ApiResponse<>(
+                true,
+                "Login successful",
+                response
+        );
     }
 
     @GetMapping("/profile")
