@@ -20,8 +20,18 @@ public class ProductController {
     private ProductService productService;
 
     @PostMapping("/add")
-    public Product addProduct(@RequestBody Product product) {
-        return productService.addProduct(product);
+    public ApiResponse<ProductDetailsDTO> addProduct(
+            @RequestBody Product product
+    ) {
+
+        ProductDetailsDTO savedProduct =
+                productService.addProduct(product);
+
+        return new ApiResponse<>(
+                true,
+                "Product added successfully",
+                savedProduct
+        );
     }
 
     @GetMapping("/all")

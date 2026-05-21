@@ -1,5 +1,6 @@
 package com.cashify.cashify_backend.controller;
 
+import com.cashify.cashify_backend.config.JwtUtil;
 import com.cashify.cashify_backend.dto.LoginRequestDTO;
 import com.cashify.cashify_backend.dto.LoginResponseDTO;
 import com.cashify.cashify_backend.dto.RegisterRequestDTO;
@@ -18,6 +19,9 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     @PostMapping("/register")
     public ApiResponse<RegisterResponseDTO> register(
@@ -62,7 +66,11 @@ public class UserController {
         );
 
         LoginResponseDTO response =
-                new LoginResponseDTO(token);
+                new LoginResponseDTO(
+                        token,
+                        request.getEmail(),
+                        jwtUtil.extractRole(token)
+                );
 
         return new ApiResponse<>(
                 true,

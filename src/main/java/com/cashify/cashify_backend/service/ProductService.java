@@ -20,8 +20,18 @@ public class ProductService {
     @Autowired
     private ProductRepository productRepository;
 
-    public Product addProduct(Product product) {
-        return productRepository.save(product);
+    public ProductDetailsDTO addProduct(Product product) {
+        Product savedProduct =  productRepository.save(product);
+
+        return new ProductDetailsDTO(
+                savedProduct.getId(),
+                savedProduct.getName(),
+                savedProduct.getBrand(),
+                savedProduct.getDescription(),
+                savedProduct.getCategory(),
+                savedProduct.getPrice(),
+                savedProduct.getImageUrl()
+        );
     }
 
     public List<ProductResponseDTO> getAllProducts() {
