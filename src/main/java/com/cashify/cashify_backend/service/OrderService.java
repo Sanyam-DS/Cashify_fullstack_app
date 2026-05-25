@@ -23,13 +23,13 @@ public class OrderService {
     @Autowired
     private UserRepository userRepository;
 
-    public OrderEntity placeOrder(Long userId) {
+    public OrderEntity placeOrder(String email) {
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         List<CartItem> cartItems =
-                cartItemRepository.findByUserId(userId);
+                cartItemRepository.findByUserId(user.getId());
 
         if (cartItems.isEmpty()) {
             throw new RuntimeException("Cart is empty");
@@ -69,7 +69,7 @@ public class OrderService {
             orderItemRepository.save(orderItem);
         }
 
-        cartItemRepository.deleteByUserId(userId);
+        cartItemRepository.deleteByUserId(user.getId());
 
         return savedOrder;
     }

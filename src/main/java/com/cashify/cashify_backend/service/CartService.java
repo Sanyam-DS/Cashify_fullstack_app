@@ -1,5 +1,6 @@
 package com.cashify.cashify_backend.service;
 
+import com.cashify.cashify_backend.dto.CartItemResponseDTO;
 import com.cashify.cashify_backend.entity.CartItem;
 import com.cashify.cashify_backend.entity.Product;
 import com.cashify.cashify_backend.entity.User;
@@ -23,11 +24,11 @@ public class CartService {
     @Autowired
     private ProductRepository productRepository;
 
-    public CartItem addToCart(Long userId,
+    public CartItem addToCart(String email,
                               Long productId,
                               int quantity) {
 
-        User user = userRepository.findById(userId)
+        User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         Product product = productRepository.findById(productId)
@@ -55,5 +56,24 @@ public class CartService {
         cartItemRepository.delete(cartItem);
 
         return "Item removed from cart";
+    }
+
+    public List<CartItemResponseDTO> getCartItems(
+            String email
+    ){
+         User user = userRepository
+                 .findByEmail(email)
+                 .orElseThrow(() -> new RuntimeException("User not found"));
+
+         List <CartItem> cartItems = cartItemRepository.findByUserId(user.getId());
+
+         return cartItems.stream()
+                 .map(item -> new CartItemResponseDTO(
+                         item.getProduct().getId(),
+                         item.getProduct().getName(),
+                         item.getQuantity(),
+                         item.getProduct().getPrice(),
+                         item.getQuantity() *item.getProduct().getPrice()
+                 )).toList();
     }
 }

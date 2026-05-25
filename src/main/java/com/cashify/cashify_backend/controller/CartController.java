@@ -1,8 +1,11 @@
 package com.cashify.cashify_backend.controller;
 
+import com.cashify.cashify_backend.dto.CartItemResponseDTO;
 import com.cashify.cashify_backend.entity.CartItem;
+import com.cashify.cashify_backend.response.ApiResponse;
 import com.cashify.cashify_backend.service.CartService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,16 +18,24 @@ public class CartController {
     private CartService cartService;
 
     @PostMapping("/add")
-    public CartItem addToCart(
-            @RequestParam Long userId,
+    public ApiResponse<CartItem> addToCart(
             @RequestParam Long productId,
-            @RequestParam int quantity
+            @RequestParam int quantity,
+            Authentication authentication
     ) {
 
-        return cartService.addToCart(
-                userId,
+        String email = authentication.getName();
+
+        CartItem cartItems =  cartService.addToCart(
+                email,
                 productId,
                 quantity
+        );
+
+        return new ApiResponse<> (
+            true,
+            "Product added to cart",
+            cartItems
         );
     }
 
@@ -42,5 +53,19 @@ public class CartController {
     ) {
 
         return cartService.removeFromCart(cartItemId);
+    }
+
+    @GetMapping
+    public ApiResponse<List<CartItemResponseDTO>> getCartItems(
+            Authentication authentication
+    ){
+        String email = authentication.getName();
+        List<CartItemResponseDTO> cartItems = cartService.getCartItems(email);
+
+        return new ApiResponse<>(
+                true,
+                "Cart Fetch Successfull",
+                cartItems
+        );
     }
 }

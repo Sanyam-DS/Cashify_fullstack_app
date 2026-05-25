@@ -1,8 +1,10 @@
 package com.cashify.cashify_backend.controller;
 
 import com.cashify.cashify_backend.entity.OrderEntity;
+import com.cashify.cashify_backend.response.ApiResponse;
 import com.cashify.cashify_backend.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,11 +17,19 @@ public class OrderController {
     private OrderService orderService;
 
     @PostMapping("/place")
-    public OrderEntity placeOrder(
-            @RequestParam Long userId
+    public ApiResponse<OrderEntity> placeOrder(
+            Authentication authentication
     ) {
 
-        return orderService.placeOrder(userId);
+        String email = authentication.getName();
+
+        OrderEntity order = orderService.placeOrder(email);
+
+        return new ApiResponse<> (
+            true,
+            "Order placed Successfully",
+            order
+        );
     }
 
     @GetMapping("/user/{userId}")
