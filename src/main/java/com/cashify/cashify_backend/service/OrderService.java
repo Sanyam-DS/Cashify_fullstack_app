@@ -1,5 +1,7 @@
 package com.cashify.cashify_backend.service;
 
+import com.cashify.cashify_backend.dto.OrderHistoryDTO;
+import com.cashify.cashify_backend.dto.OrderItemDTO;
 import com.cashify.cashify_backend.entity.*;
 import com.cashify.cashify_backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,5 +79,45 @@ public class OrderService {
     public List<OrderEntity> getUserOrders(Long userId) {
 
         return orderRepository.findByUserId(userId);
+    }
+
+    public List<OrderHistoryDTO> getOrderHistory(
+            String email
+    ){
+
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                "User not found"
+                        ));
+
+        List<OrderEntity> orders =
+                orderRepository.findByUserId(
+                        user.getId()
+                );
+
+        return orders.stream()
+                .map(order -> {
+                    List<OrderItemDTO> items =
+                            order.getOrderItems()
+                                    .stream()
+                                    .map(item ->
+                                            new OrderItemDTO(
+                                                    item.getProduct().getName(),
+                                                    item.getQuantity(),
+                                                    item.getPrice()
+                                            )
+                                    )
+                                    .toList();
+                    return new OrderHistoryDTO(
+                            order.getId(),
+                            order.getStatus().toString(),
+                            order.getOrderDate(),
+                            order.getTotalAmount(),
+                            items
+                    );
+                })
+                .toList();
     }
 }

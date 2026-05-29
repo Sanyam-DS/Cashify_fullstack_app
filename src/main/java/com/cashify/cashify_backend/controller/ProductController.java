@@ -1,10 +1,12 @@
 package com.cashify.cashify_backend.controller;
 
 import com.cashify.cashify_backend.dto.ProductDetailsDTO;
+import com.cashify.cashify_backend.dto.ProductRequestDTO;
 import com.cashify.cashify_backend.dto.ProductResponseDTO;
 import com.cashify.cashify_backend.entity.Product;
 import com.cashify.cashify_backend.response.ApiResponse;
 import com.cashify.cashify_backend.service.ProductService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +23,16 @@ public class ProductController {
 
     @PostMapping("/add")
     public ApiResponse<ProductDetailsDTO> addProduct(
-            @RequestBody Product product
+            @Valid @RequestBody ProductRequestDTO request
     ) {
+
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setBrand(request.getBrand());
+        product.setDescription(request.getDescription());
+        product.setCategory(request.getCategory());
+        product.setPrice(request.getPrice());
+        product.setImageUrl(request.getImageUrl());
 
         ProductDetailsDTO savedProduct =
                 productService.addProduct(product);
@@ -67,8 +77,16 @@ public class ProductController {
     @PutMapping("/update/{id}")
     public ApiResponse<ProductDetailsDTO> updateProduct(
             @PathVariable Long id,
-            @RequestBody Product product
+            @RequestBody ProductRequestDTO request
     ) {
+
+        Product product = new Product();
+        product.setName(request.getName());
+        product.setBrand(request.getBrand());
+        product.setDescription(request.getDescription());
+        product.setCategory(request.getCategory());
+        product.setPrice(request.getPrice());
+        product.setImageUrl(request.getImageUrl());
 
         ProductDetailsDTO updatedProduct =
                 productService.updateProduct(id, product);

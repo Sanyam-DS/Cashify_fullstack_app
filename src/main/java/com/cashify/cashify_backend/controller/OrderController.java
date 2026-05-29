@@ -1,5 +1,6 @@
 package com.cashify.cashify_backend.controller;
 
+import com.cashify.cashify_backend.dto.OrderHistoryDTO;
 import com.cashify.cashify_backend.entity.OrderEntity;
 import com.cashify.cashify_backend.response.ApiResponse;
 import com.cashify.cashify_backend.service.OrderService;
@@ -38,5 +39,24 @@ public class OrderController {
     ) {
 
         return orderService.getUserOrders(userId);
+    }
+
+    @GetMapping("/history")
+    public ApiResponse<List<OrderHistoryDTO>>
+    getOrderHistory(
+            Authentication authentication
+    ) {
+
+        String email =
+                authentication.getName();
+
+        List<OrderHistoryDTO> orders =
+                orderService.getOrderHistory(email);
+
+        return new ApiResponse<>(
+                true,
+                "Order history fetched successfully",
+                orders
+        );
     }
 }
