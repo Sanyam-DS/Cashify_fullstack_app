@@ -1,5 +1,6 @@
 package com.cashify.cashify_backend.entity;
 
+import com.cashify.cashify_backend.enums.OrderStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -19,7 +20,8 @@ public class OrderEntity {
 
     private LocalDateTime orderDate;
 
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus status;
 
     @ManyToOne(fetch = FetchType.LAZY)
 

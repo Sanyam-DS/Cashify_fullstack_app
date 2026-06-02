@@ -3,6 +3,8 @@ package com.cashify.cashify_backend.service;
 import com.cashify.cashify_backend.dto.OrderHistoryDTO;
 import com.cashify.cashify_backend.dto.OrderItemDTO;
 import com.cashify.cashify_backend.entity.*;
+import com.cashify.cashify_backend.enums.OrderStatus;
+import com.cashify.cashify_backend.exception.InvalidOrderStatusException;
 import com.cashify.cashify_backend.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -48,7 +50,7 @@ public class OrderService {
 
         order.setUser(user);
         order.setOrderDate(LocalDateTime.now());
-        order.setStatus("PLACED");
+        order.setStatus(OrderStatus.PLACED);
         order.setTotalAmount(total);
 
         OrderEntity savedOrder =
@@ -119,5 +121,59 @@ public class OrderService {
                     );
                 })
                 .toList();
+    }
+
+    public OrderEntity updateOrderStatus(
+            Long orderId, OrderStatus newStatus
+    ){
+        OrderEntity order = orderRepository.findById(orderId)
+                .orElseThrow(()->
+                        new RuntimeException("Order not found"));
+
+        OrderStatus currentStatus = order.getStatus();
+
+        if(!isValidTransition(
+                currentStatus,
+                newStatus
+        )){
+            throw new InvalidOrderStatusException(
+                    "Invalid status transition from"
+                    +currentStatus
+                    +"to"
+                    +newStatus
+            );
+        }
+
+        order.setStatus(newStatus);
+
+        return orderRepository.save(order);
+    }
+
+    private boolean isValidTransition(
+            OrderStatus current,
+            OrderStatus next
+    ){
+
+        switch(current) {
+            case PLACED:
+                return next == OrderStatus.CONFIRMED || next == OrderStatus.CANCELLED;
+
+            case CONFIRMED:
+                return next == OrderStatus.SHIPPED || next == OrderStatus.CANCELLED;
+
+            case SHIPPED:
+                return next == OrderStatus.OUT_FOR_DELIVERY;
+
+            case OUT_FOR_DELIVERY:
+                return next == OrderStatus.DELIVERED;
+
+            case DELIVERED:
+            case CANCELLED:
+                return false;
+
+            default:
+                return false;
+        }
+
     }
 }

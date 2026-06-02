@@ -1,6 +1,7 @@
 package com.cashify.cashify_backend.controller;
 
 import com.cashify.cashify_backend.dto.OrderHistoryDTO;
+import com.cashify.cashify_backend.dto.OrderStatusUpdateDTO;
 import com.cashify.cashify_backend.entity.OrderEntity;
 import com.cashify.cashify_backend.response.ApiResponse;
 import com.cashify.cashify_backend.service.OrderService;
@@ -57,6 +58,18 @@ public class OrderController {
                 true,
                 "Order history fetched successfully",
                 orders
+        );
+    }
+
+    @PutMapping("/{orderId}/status")
+    public OrderEntity updateOrderStatus(
+            @PathVariable Long orderId,
+            @RequestBody OrderStatusUpdateDTO request
+    ) {
+
+        return orderService.updateOrderStatus(
+                orderId,
+                request.getStatus()
         );
     }
 }
