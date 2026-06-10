@@ -1,6 +1,7 @@
 package com.cashify.cashify_backend.service;
 
 import com.cashify.cashify_backend.dto.AdminDashboardDTO;
+import com.cashify.cashify_backend.dto.MonthlyRevenueDTO;
 import com.cashify.cashify_backend.dto.TopProductDTO;
 import com.cashify.cashify_backend.repository.OrderItemRepository;
 import com.cashify.cashify_backend.repository.OrderRepository;
@@ -48,5 +49,17 @@ public class AdminService {
 
     public List<TopProductDTO> getTopSellingProducts(){
         return orderItemRepository.getTopSellingProducts();
+    }
+
+    public List<MonthlyRevenueDTO> getMonthlyRevenue() {
+
+        return orderRepository
+                .getMonthlyRevenue()
+                .stream()
+                .map(row -> new MonthlyRevenueDTO(
+                        (String) row[0],
+                        ((Number) row[1]).doubleValue()
+                ))
+                .toList();
     }
 }

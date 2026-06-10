@@ -15,4 +15,15 @@ public interface OrderRepository
        FROM OrderEntity o
        """)
     Double getTotalRevenue();
+
+    @Query(value = """
+    SELECT
+    DATE_FORMAT(order_date, '%Y-%m') AS month,
+    SUM(total_amount) AS revenue
+    FROM order_entity
+    GROUP BY DATE_FORMAT(order_date, '%Y-%m')
+    ORDER BY month
+    """, nativeQuery = true)
+    List<Object[]> getMonthlyRevenue();
 }
+

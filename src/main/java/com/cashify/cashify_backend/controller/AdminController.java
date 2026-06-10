@@ -1,6 +1,7 @@
 package com.cashify.cashify_backend.controller;
 
 import com.cashify.cashify_backend.dto.AdminDashboardDTO;
+import com.cashify.cashify_backend.dto.MonthlyRevenueDTO;
 import com.cashify.cashify_backend.dto.TopProductDTO;
 import com.cashify.cashify_backend.service.AdminService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,4 +29,12 @@ public class AdminController {
     public List<TopProductDTO> getTopSellingProducts(){
         return adminService.getTopSellingProducts();
     }
+
+    @GetMapping("/revenue/monthly")
+    public List<MonthlyRevenueDTO>
+    getMonthlyRevenue() {
+
+        return adminService.getMonthlyRevenue();
+    }
+
 }
